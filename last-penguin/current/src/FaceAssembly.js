@@ -2,32 +2,50 @@ import * as THREE from 'three';
 import { FaceBase } from './FaceBase.js';
 import { EyePart, createEyeMaterials } from './EyePart.js';
 import { BrowPart } from './BrowPart.js';
+import { BeakPartV2 } from './BeakPartV2.js';
 
 export class FaceAssembly {
   constructor() {
     this.group = new THREE.Group();
     this.group.name = 'FaceAssembly';
+
     this.faceBase = new FaceBase();
     this.eyeMaterials = createEyeMaterials();
     this.leftEye = new EyePart(this.eyeMaterials);
     this.rightEye = new EyePart(this.eyeMaterials);
     this.leftBrow = new BrowPart({ side: 'left' });
     this.rightBrow = new BrowPart({ side: 'right' });
+    this.beak = new BeakPartV2();
+
     this.anchors = {
       leftEye: new THREE.Group(),
       rightEye: new THREE.Group(),
       leftBrow: new THREE.Group(),
       rightBrow: new THREE.Group(),
+      beak: new THREE.Group(),
     };
+
     this.anchors.leftEye.name = 'Anchor_Eye_L';
     this.anchors.rightEye.name = 'Anchor_Eye_R';
     this.anchors.leftBrow.name = 'Anchor_Brow_L';
     this.anchors.rightBrow.name = 'Anchor_Brow_R';
+    this.anchors.beak.name = 'Anchor_Beak';
+
     this.anchors.leftEye.add(this.leftEye.group);
     this.anchors.rightEye.add(this.rightEye.group);
     this.anchors.leftBrow.add(this.leftBrow.group);
     this.anchors.rightBrow.add(this.rightBrow.group);
-    this.group.add(this.faceBase.group,this.anchors.leftEye,this.anchors.rightEye,this.anchors.leftBrow,this.anchors.rightBrow);
+    this.anchors.beak.add(this.beak.group);
+
+    this.group.add(
+      this.faceBase.group,
+      this.anchors.leftEye,
+      this.anchors.rightEye,
+      this.anchors.leftBrow,
+      this.anchors.rightBrow,
+      this.anchors.beak,
+    );
+
     this.layout = {
       eyeX: 0.245,
       eyeY: 0.065,
@@ -36,7 +54,11 @@ export class FaceAssembly {
       browY: 0.305,
       browZ: 0.120,
       eyeScale: 0.90,
+      beakY: -0.105,
+      beakZ: 0.178,
+      beakScale: 0.72,
     };
+
     this.applyLayout();
     this.setExpression('neutral');
   }
@@ -49,6 +71,8 @@ export class FaceAssembly {
     this.anchors.rightBrow.position.set(p.browX, p.browY, p.browZ);
     this.leftEye.group.scale.setScalar(p.eyeScale);
     this.rightEye.group.scale.setScalar(p.eyeScale);
+    this.anchors.beak.position.set(0,p.beakY,p.beakZ);
+    this.beak.group.scale.setScalar(p.beakScale);
   }
 
   setEyeSpacing(v) {
@@ -67,6 +91,8 @@ export class FaceAssembly {
     this.expression = name;
     this.leftEye.setExpression(name);
     this.rightEye.setExpression(name);
+    this.beak.setExpression(name);
+
     const deg = THREE.MathUtils.degToRad;
     const poses = {
       neutral: { l: [0, 0, 1, 1], r: [0, 0, 1, 1] },
@@ -107,6 +133,7 @@ export class FaceAssembly {
     const geo = new THREE.BufferGeometry().setFromPoints(pts);
     const lines = new THREE.LineSegments(geo, mat);
     g.add(lines);
+
     const markerGeo = new THREE.RingGeometry(0.025, 0.032, 24);
     const markerMat = new THREE.MeshBasicMaterial({ color: 0xff8a3d, side: THREE.DoubleSide });
     for (const x of [-this.layout.eyeX, this.layout.eyeX]) {
