@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { PENGUIN_V2_SPEC as SPEC } from './spec.js';
 import {
-  BeakPart,
   buildBellyPart,
   buildBodyPart,
   buildFootPart,
@@ -32,7 +31,6 @@ export class LastPenguinCurrent extends THREE.Group {
       belly: buildBellyPart(),
       head: buildHeadPart(),
       face: new FaceAssembly(),
-      beak: new BeakPart(),
       tuft: buildTuftPart(),
       wingL: buildWingPart(-1),
       wingR: buildWingPart(1),
@@ -45,6 +43,7 @@ export class LastPenguinCurrent extends THREE.Group {
   _assemble(){
     this.visualRoot = new THREE.Group();
     this.add(this.visualRoot);
+
     this.bodyPivot = new THREE.Group();
     this.headPivot = new THREE.Group();
     this.wingLPivot = new THREE.Group();
@@ -52,9 +51,10 @@ export class LastPenguinCurrent extends THREE.Group {
     this.footLPivot = new THREE.Group();
     this.footRPivot = new THREE.Group();
     this.scarfPivot = new THREE.Group();
+
     this.visualRoot.add(this.bodyPivot,this.headPivot,this.wingLPivot,this.wingRPivot,this.footLPivot,this.footRPivot,this.scarfPivot);
     this.bodyPivot.add(this.parts.body,this.parts.belly);
-    this.headPivot.add(this.parts.head,this.parts.face.group,this.parts.beak,this.parts.tuft);
+    this.headPivot.add(this.parts.head,this.parts.face.group,this.parts.tuft);
     this.wingLPivot.add(this.parts.wingL);
     this.wingRPivot.add(this.parts.wingR);
     this.footLPivot.add(this.parts.footL);
@@ -65,38 +65,31 @@ export class LastPenguinCurrent extends THREE.Group {
     setPos(this.bodyPivot,p.body.position);
     this.parts.body.position.set(0,0,0);
     setPos(this.parts.belly,[p.belly.position[0]-p.body.position[0],p.belly.position[1]-p.body.position[1],p.belly.position[2]-p.body.position[2]]);
+
     setPos(this.headPivot,p.head.position);
     this.parts.head.position.set(0,0,0);
     this.parts.face.group.position.set(0, 0.015, 0.705);
     this.parts.face.group.rotation.x = -0.012;
-    setPos(this.parts.beak,[p.beak.position[0]-p.head.position[0],p.beak.position[1]-p.head.position[1],p.beak.position[2]-p.head.position[2]]);
-    this.parts.beak.position.z += 0.035;
+
     setPos(this.parts.tuft,[p.tuft.position[0]-p.head.position[0],p.tuft.position[1]-p.head.position[1],p.tuft.position[2]-p.head.position[2]]);
+
     setPos(this.wingLPivot,p.wing.pivotLeft);
     setPos(this.wingRPivot,p.wing.pivotRight);
     this.wingLPivot.rotation.z=p.wing.baseRotationZ;
     this.wingRPivot.rotation.z=-p.wing.baseRotationZ;
+
     setPos(this.footLPivot,[-p.foot.x,p.foot.y,p.foot.z]);
     setPos(this.footRPivot,[p.foot.x,p.foot.y,p.foot.z]);
     setPos(this.scarfPivot,p.scarf.position);
-    this.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; } });
+
+    this.traverse(o=>{
+      if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }
+    });
   }
 
   setExpression(name){
     this.expression=name;
     this.parts.face.setExpression(name);
-    this.parts.beak.resetExpression();
-    if(name==='happy'){
-      this.parts.beak.mouth.visible=true;
-      this.parts.beak.mouth.scale.set(.8,1,1);
-      this.parts.beak.lowerPivot.rotation.x=-0.24;
-    } else if(name==='surprised'){
-      this.parts.beak.mouth.visible=true;
-      this.parts.beak.mouth.scale.set(.72,1.15,1);
-      this.parts.beak.lowerPivot.rotation.x=-0.40;
-    } else if(name==='angry'){
-      this.parts.beak.upper.scale.y=.88;
-    }
   }
 
   setLook(x,y){
