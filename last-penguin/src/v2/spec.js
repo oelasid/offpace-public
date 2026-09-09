@@ -1,0 +1,41 @@
+export const PENGUIN_V2_SPEC = {
+  meta: {
+    name: 'LAST PENGUIN / modular toon mascot v2',
+    worldScaleMetersPerUnit: 0.5,
+    targetHeightUnits: 2.05,
+    designRule: 'Numeric dimensions are SSOT. Reference images are visual guidance only.',
+  },
+  colors: {
+    charcoal: 0x2c2d35,
+    charcoalSoft: 0x373842,
+    cream: 0xfff7ea,
+    orange: 0xffa232,
+    orangeDark: 0xe9851f,
+    scarf: 0xc9473b,
+    scarfDark: 0xa93a31,
+    eye: 0x111827,
+    highlight: 0xffffff,
+    blush: 0xf5a6ad,
+    mouth: 0x6b2632,
+    outline: 0x181922,
+  },
+  parts: {
+    body: { size: [1.60, 1.30, 1.70], position: [0, 0.79, 0], shape: { belly: 0.08, topTaper: -0.05, bottomTaper: -0.10, flattenBottom: 0.10 } },
+    belly: { size: [1.12, 1.06, 0.15], position: [0, 0.78, 0.825], shape: { belly: 0.06, topTaper: -0.08, bottomTaper: -0.03 } },
+    head: { size: [1.44, 1.12, 1.40], position: [0, 1.40, 0.02], shape: { belly: 0.07, topTaper: -0.03, bottomTaper: -0.08, flattenBottom: 0.05 } },
+    face: { size: [1.32, 0.90, 0.16], position: [0, 1.40, 0.725], cheekOffsetX: 0.27, cheekY: 0.05, lowerY: -0.23 },
+    eye: { size: [0.32, 0.40, 0.20], x: 0.31, y: 1.47, z: 0.835 },
+    beak: { size: [0.48, 0.28, 0.44], position: [0, 1.25, 0.89] },
+    tuft: { size: [0.36, 0.30, 0.30], position: [0, 1.96, -0.02] },
+    wing: { size: [0.44, 1.00, 0.56], pivotLeft: [-0.77, 1.02, 0.00], pivotRight: [0.77, 1.02, 0.00], baseRotationZ: 0.28 },
+    foot: { size: [0.56, 0.18, 0.70], x: 0.34, y: 0.09, z: 0.33 },
+    scarf: { outerSize: [1.50, 0.28, 1.52], position: [0, 1.13, 0.01], majorRadius: 0.66, tubeRadius: 0.13, flattenZ: 0.91, tailPosition: [0.48, -0.26, 0.50], tailSize: [0.27, 0.68, 0.15] },
+  },
+  assembly: {
+    explodedOffsets: {
+      head: [0, 0.48, 0], face: [0, 0.08, 0.40], eyeL: [-0.18, 0.08, 0.58], eyeR: [0.18, 0.08, 0.58], beak: [0, -0.08, 0.72], tuft: [0, 0.40, 0],
+      body: [0, -0.28, 0], belly: [0, -0.16, 0.36], wingL: [-0.70, 0, 0], wingR: [0.70, 0, 0], footL: [-0.18, -0.22, 0.18], footR: [0.18, -0.22, 0.18], scarf: [0, 0.05, 0.62],
+    },
+  },
+  colliderRecommendation: { type: 'capsule', radius: 0.66, halfHeight: 0.68, center: [0, 0.90, 0], note: 'Keep physics collider independent from visual meshes.' },
+};
