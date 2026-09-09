@@ -15,7 +15,7 @@ export function createEyeMaterials(){
   return {
     sclera:new THREE.MeshToonMaterial({color:0xffffff,gradientMap}),
     iris:new THREE.MeshToonMaterial({color:0x1f2d7b,gradientMap}),
-    pupil:new THREE.MeshToonMaterial({color:0x0c163f,gradientMap}),
+    pupil:new THREE.MeshBasicMaterial({color:0x111111}),
     highlight:new THREE.MeshBasicMaterial({color:0xffffff}),
     eyelid:new THREE.MeshToonMaterial({color:0xffffff,gradientMap,side:THREE.DoubleSide}),
   };
@@ -33,19 +33,24 @@ export class EyePart{
   build(){
     this.eyeRoot=new THREE.Group();
     this.group.add(this.eyeRoot);
+
     this.sclera=new THREE.Mesh(new THREE.SphereGeometry(0.16,32,32),this.materials.sclera);
     this.sclera.scale.set(1,1,0.92);
     this.eyeRoot.add(this.sclera);
+
     this.irisShell=new THREE.Group();
     this.irisShell.position.z=0.098;
     this.eyeRoot.add(this.irisShell);
+
     this.iris=new THREE.Mesh(new THREE.SphereGeometry(0.09,28,28),this.materials.iris);
     this.iris.scale.set(1,1.08,0.35);
     this.irisShell.add(this.iris);
-    this.pupil=new THREE.Mesh(new THREE.SphereGeometry(0.06,24,24),this.materials.pupil);
-    this.pupil.position.z=0.012;
-    this.pupil.scale.set(1,1,0.2);
+
+    this.pupil=new THREE.Mesh(new THREE.CircleGeometry(0.052,28),this.materials.pupil);
+    this.pupil.position.z=0.036;
+    this.pupil.renderOrder=2;
     this.irisShell.add(this.pupil);
+
     this.highlightGroup=new THREE.Group();
     this.highlightGroup.position.z=0.124;
     this.eyeRoot.add(this.highlightGroup);
@@ -54,6 +59,7 @@ export class EyePart{
     const h2=new THREE.Mesh(new THREE.CircleGeometry(0.012,20),this.materials.highlight);
     h2.position.set(0.03,-0.035,0);
     this.highlightGroup.add(h1,h2);
+
     const lidGeo=new THREE.PlaneGeometry(0.38,0.22);
     this.upperLid=new THREE.Mesh(lidGeo,this.materials.eyelid);
     this.upperLid.position.set(0,0.15,0.132);
@@ -67,6 +73,7 @@ export class EyePart{
   setExpression(v){this.state.expression=v;this.applyState();}
   blinkOnce(){this.blinkStart=performance.now();}
   setLook(x,y){this.irisShell.position.x=x*0.012;this.irisShell.position.y=y*0.01;this.highlightGroup.position.x=x*0.012;this.highlightGroup.position.y=y*0.01;}
+
   update(t){
     if(this.blinkStart){
       const e=(t-this.blinkStart)/180;
@@ -74,6 +81,7 @@ export class EyePart{
       this.applyState();
     }
   }
+
   applyState(){
     const s=this.state;
     let top=0,bottom=0,scaleY=1.08;
